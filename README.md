@@ -18,6 +18,6 @@ Again, this extension has only been minimally tested, so please use it at your o
 
 Enjoy!
 
-Oh; one more thing.  If you find a bug, please email <a href="mailto:louis@squideyes.com" target="_blank">louis@suideyes.com</a>.  Better yet, offer up a fix via a pull-request.  The source code can be found at <a href="https://github.com/squideyes/SetCodeHeaders" target="_blank">https://github.com/squideyes/SetCodeHeaders</a>.
+Oh; one more thing.  If you find a bug, please email <a href="mailto:louis@squideyes.com" target="_blank">louis@squideyes.com</a>.  Better yet, offer up a fix via a pull-request.  The source code can be found at <a href="https://github.com/squideyes/SetCodeHeaders" target="_blank">https://github.com/squideyes/SetCodeHeaders</a>.
 
 

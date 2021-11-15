@@ -1,4 +1,13 @@
-﻿using System.Collections.Generic;
+﻿// ********************************************************
+// Copyright (C) 2021 Louis S. Berman (louis@squideyes.com) 
+// 
+// This file is part of SetCodeHeaders
+// 
+// The use of this source code is licensed under the terms 
+// of the MIT License (https://opensource.org/licenses/MIT)
+// ********************************************************
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,24 +17,40 @@ namespace SetCodeHeaders
     [Command(PackageIds.MyCommand)]
     internal sealed class MyCommand : BaseCommand<MyCommand>
     {
-        private readonly List<string> fileNames = new();
-
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
+            var solution = await VS.Solutions.GetCurrentSolutionAsync();
+
             var projects = (await VS.Solutions.GetAllProjectsAsync())?.ToList();
 
             if (!projects.Any())
-                return;
+            {
+                Package.ShowMessageBox(
+                    $"The \"{solution.ToNameOnly()}\" solution does not contain a project!");
 
-            var (hasLines, lines) = GetHeaderLines(projects);
+                return;
+            }
+
+            var fullPath = GetHeaderTextFullPath(solution);
+
+            var (hasLines, lines) = GetHeaderLines(fullPath);
 
             if (!hasLines)
+            {
+                Package.ShowMessageBox(
+                    $"The \"{fullPath}\" file does not contain header-text!");
+
                 return;
+            }
+
+            var fileNames = new List<string>();
 
             foreach (var project in projects)
             {
-                foreach (var file in project.Children.Where(
-                    c => c.Type == SolutionItemType.PhysicalFile))
+                var files = project.Children.Flatten(c => c.Children)
+                    .Where(i => i.Type == SolutionItemType.PhysicalFile);
+
+                foreach (var file in files)
                 {
                     if (file.FullPath.HasValidExtension())
                         fileNames.Add(file.FullPath);
@@ -33,7 +58,15 @@ namespace SetCodeHeaders
             }
 
             if (fileNames.Count == 0)
+            {
+                Package.ShowMessageBox(
+                     $"The \"{solution.ToNameOnly()}\" solution does not contain updatable files!");
+
                 return;
+            }
+
+            int updated = 0;
+            int skipped = 0;
 
             foreach (var fileName in fileNames)
             {
@@ -54,33 +87,53 @@ namespace SetCodeHeaders
                         + oldText.WithoutHeader(fileKind);
 
                     if (newText == oldText)
+                    {
+                        skipped++;
+
                         continue;
+                    }
 
                     using var edit = docView.TextBuffer.CreateEdit();
 
-                    edit.Replace(0, 
+                    edit.Replace(0,
                         docView.TextBuffer.CurrentSnapshot.Length, newText);
 
                     edit.Apply();
 
                     if (docView?.TextView == null)
+                    {
+                        skipped++;
+
                         continue;
+                    }
 
                     docView.TextView.MoveCaretTo(0);
+
+                    updated++;
                 }
                 else
                 {
                     var oldText = File.ReadAllText(fileName);
 
-                    var newText = GetHeaderText(fileKind, lines) 
+                    var newText = GetHeaderText(fileKind, lines)
                         + oldText.WithoutHeader(fileKind);
 
                     if (newText == oldText)
+                    {
+                        skipped++;
+
                         continue;
+                    }
 
                     File.WriteAllText(fileName, newText);
+
+                    updated++;
                 }
             }
+
+            MiscHelpers.ShowMessageBox(Package,
+                $"{updated:N0} \"{solution.ToNameOnly()}\" files were updated ({skipped:N0} were skipped).",
+                MessageBoxKind.Info);
         }
 
         private string GetHeaderText(FileKind fileKind, List<string> lines)
@@ -111,24 +164,17 @@ namespace SetCodeHeaders
             return sb.ToString();
         }
 
-        private (bool, List<string>) GetHeaderLines(List<Project> projects)
+        private string GetHeaderTextFullPath(Solution solution)
         {
-            static Solution GetSolution(SolutionItem item)
-            {
-                while (item.Parent != null)
-                    item = item.Parent;
-
-                return item as Solution;
-            }
-
-            var solution = GetSolution(projects.First());
-
             var folder = Path.GetDirectoryName(solution.FullPath);
 
             var fileName = Path.GetFileNameWithoutExtension(solution.FullPath);
 
-            var fullPath = Path.Combine(folder, fileName + ".sln.headertext");
+            return Path.Combine(folder, fileName + ".sln.headertext");
+        }
 
+        private (bool, List<string>) GetHeaderLines(string fullPath)
+        {
             if (!File.Exists(fullPath))
                 return (false, null);
 
@@ -146,3 +192,4 @@ namespace SetCodeHeaders
         }
     }
 }
+

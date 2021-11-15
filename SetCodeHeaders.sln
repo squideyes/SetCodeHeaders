@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
+		SetCodeHeaders.sln.headertext = SetCodeHeaders.sln.headertext
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetCodeHeaders", "SetCodeHeaders\SetCodeHeaders.csproj", "{DE49B8F7-4FAA-49A8-8D53-80ED1F93D32B}"

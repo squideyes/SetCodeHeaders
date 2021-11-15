@@ -1,4 +1,4 @@
-// ********************************************************
+﻿// ********************************************************
 // Copyright (C) 2021 Louis S. Berman (louis@squideyes.com) 
 // 
 // This file is part of SetCodeHeaders
@@ -9,12 +9,10 @@
 
 namespace SetCodeHeaders
 {
-    public enum FileKind
+    public enum MessageBoxKind
     {
-        CS,
-        XML,
-        XSD,
-        XAML,
-        CONFIG
+        Info,
+        Warning
     }
 }
+

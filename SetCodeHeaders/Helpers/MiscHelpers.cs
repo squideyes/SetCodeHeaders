@@ -1,4 +1,14 @@
-﻿using Microsoft.VisualStudio.Text;
+﻿// ********************************************************
+// Copyright (C) 2021 Louis S. Berman (louis@squideyes.com) 
+// 
+// This file is part of SetCodeHeaders
+// 
+// The use of this source code is licensed under the terms 
+// of the MIT License (https://opensource.org/licenses/MIT)
+// ********************************************************
+
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +19,9 @@ namespace SetCodeHeaders
 {
     public static class MiscHelpers
     {
+        private static readonly Regex solutionNameRegex = 
+            new("(?<=').*?(?=')", RegexOptions.Compiled);
+
         private static readonly Regex csHeaderRegex =
             new(@"^\s*(//.*[\r\n]?)*\s*", RegexOptions.Compiled);
 
@@ -95,5 +108,28 @@ namespace SetCodeHeaders
             else
                 return WithoutHeader(xmlHeaderRegex);
         }
+
+        public static string ToNameOnly(this Solution solution)=>
+            solutionNameRegex.Match(solution.Name).Value;
+
+        public static void ShowMessageBox(this AsyncPackage package, string message, 
+            MessageBoxKind kind = MessageBoxKind.Warning)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var icon = kind switch
+            {
+                MessageBoxKind.Info => OLEMSGICON.OLEMSGICON_INFO,
+                MessageBoxKind.Warning => OLEMSGICON.OLEMSGICON_WARNING,
+                _ => throw new ArgumentOutOfRangeException(nameof(kind))
+            };
+
+            VsShellUtilities.ShowMessageBox(package, message, "SetCodeHeaders", icon,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+        }
+
+        public static List<T> Flatten<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f) =>
+            e.SelectMany(c => f(c).Flatten(f)).Concat(e).ToList();
     }
 }
+

@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Models\FileKind.cs" />
     <Compile Include="Helpers\MiscHelpers.cs" />
+    <Compile Include="Models\MessageBoxKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\MyCommand.cs" />
     <Compile Include="LicenseHeaderPackage.cs" />
@@ -84,8 +85,13 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Community.VisualStudio.VSCT" Version="16.0.29.6" PrivateAssets="all" />
