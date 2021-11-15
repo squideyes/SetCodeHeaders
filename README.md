@@ -1,4 +1,4 @@
-**SetCodeHeaders** is a simple Visual Studio 2022 extension that does one thing and one thing alone: add text from a ".sln.headertext" file to ALL of the .CS, .XML, .CONFIG, .XSD and .XAML files in a given solution.  The hand-edited **.sln.headertext file** most typically contains license and author info, but any header content that may be added to the top of your code files.
+**SetCodeHeaders** is a simple Visual Studio 2022 extension that does one thing and one thing alone: add text from a "\<Solution Name>.sln.headertext" file to ALL of the .CS, .XML, .CONFIG, .XSD and .XAML files in a given solution.  The hand-edited **\<Solution Name>.sln.headertext file** most typically contains license and author info, but any header content that may be added to the top of your code files.
 
 The extension was written as a stop-gap while waiting for Rubicon's superb <a href="https://github.com/rubicon-oss/LicenseHeaderManager" target="_blank">License Header Manager</a> to be updated to work with VS2022, and should not be used as a long-term replacement, since:
 
