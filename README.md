@@ -10,7 +10,7 @@ The extension was written as a stop-gap while waiting for Rubicon's superb <a hr
 
 To install the extension, download the SetCodeHeaders project from GitHub, compile a Release version, and then execute the **SetCodeHeaders.vsix** file generated in the bin/Release folder.  Once installed, a "Set Code Headers" menu item will appear on your VS2022 "Tools" menu.  *(NOTE: given the transient nature of this extension, there's no plan to publish it to the Visual Studio Extensions Gallery.)*
 
-As a final preparatory step, you'll need to create a text file in your solution folder, named <SolutionName>.sln.headertext.  The file should contain your header-text.  *NOTE: do not include comment signifiers in your header text (i.e. "//", "<!\--" and/or "-->") as those signifiers will be automatically added for you.*
+As a final preparatory step, you'll need to create a text file in your solution folder, named \<SolutionName>.sln.headertext.  The file should contain your header-text.  *NOTE: do not include comment signifiers in your header text (i.e. "//", "<!\--" and/or "-->") as those signifiers will be automatically added for you.*
 
 To update your code files, click on the "Tools/Set Code Headers" menu item. If a file has an existing header, it will be replaced.  Closed files will be permanently updated with the new header-text; open files will be updated in place, with undo-buffer properly set.
 
