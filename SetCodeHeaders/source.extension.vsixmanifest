@@ -3,12 +3,12 @@
     <Metadata>
         <Identity Id="SetCodeHeaders.39e514cd-d540-4fce-bc69-eb6f1d0b3e9b" Version="1.0" Language="en-US" Publisher="Louis S. Berman" />
         <DisplayName>SetCodeHeaders</DisplayName>
-        <Description xml:space="preserve">Adds / updates headers to all of your source code files (.CS, .CONFIG, .XSD, .XML and .XAML), unig a solution-wide ".headertext" file</Description>
+        <Description xml:space="preserve">Adds / updates headers to all of your source code files (.CS, .CONFIG, .XSD, .XML and .XAML), unig a solution-wide "&lt;SolutionName&gt;.headertext" file</Description>
         <MoreInfo>https://github.com/squideyes/SetCodeHeaders</MoreInfo>
         <License>LICENSE.txt</License>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>
-        <Tags>VS2022;License Header</Tags>
+        <Tags>VS2022;License Header;Extension</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">

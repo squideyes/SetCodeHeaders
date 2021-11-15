@@ -24,7 +24,7 @@
 			  <Icon guid="ImageCatalogGuid" id="PasteAppend" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
-          <ButtonText>Set License Headers</ButtonText>
+          <ButtonText>Set Code Headers</ButtonText>
           <LocCanonicalName>.Tools.SetCodeHeaders</LocCanonicalName>
         </Strings>
       </Button>
