@@ -45,7 +45,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Models\FileKind.cs" />
     <Compile Include="Helpers\MiscHelpers.cs" />
     <Compile Include="Models\MessageBoxKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

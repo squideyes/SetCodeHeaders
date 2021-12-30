@@ -8,8 +8,8 @@
 // ********************************************************
 
 using FluentAssertions;
-using SetCodeHeaders;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SetCodeHeaders;
 
 namespace UnitTests
 {
@@ -17,29 +17,25 @@ namespace UnitTests
     public class MiscExtendersTests
     {
         [TestMethod]
-        [DataRow(FileKind.CS, "", "")]
-        [DataRow(FileKind.CS, " ", "")]
-        [DataRow(FileKind.CS, "aaa", "aaa")]
-        [DataRow(FileKind.CS, "aaa ", "aaa ")]
-        [DataRow(FileKind.CS, " aaa", "aaa")]
-        [DataRow(FileKind.CS, "//aaa", "")]
-        [DataRow(FileKind.CS, "// aaa", "")]
-        [DataRow(FileKind.CS, " //aaa", "")]
-        [DataRow(FileKind.CS, " //aaa//bbb", "")]
-        [DataRow(FileKind.CS, " //aaa// bbb", "")]
-        [DataRow(FileKind.CS, "//aaa\nbbb", "bbb")]
-        [DataRow(FileKind.CS, "//aaa\nbbb\n//ccc", "bbb\n//ccc")]
-        [DataRow(FileKind.XML, "<!--aaa-->", "")]
-        [DataRow(FileKind.XML, "<!--aaa-->bbb", "bbb")]
-        [DataRow(FileKind.XML, "<!--aaa-->\nbbb", "bbb")]
-        [DataRow(FileKind.XML, "<!--aaa--><!--ccc-->", "<!--ccc-->")]
-        [DataRow(FileKind.XML, "<!--aaa-->\n<!--ccc-->", "<!--ccc-->")]
-        [DataRow(FileKind.XML, "<!--aaa-->\nbbb<!--ccc-->", "bbb<!--ccc-->")]
-        [DataRow(FileKind.XML, "<!--aaa-->\nbbb\n<!--ccc-->", "bbb\n<!--ccc-->")]
-        public void WithoutHeaderWithGoodArgs(
-            FileKind fileKind, string oldText, string expected)
+        [DataRow("", "")]
+        [DataRow(" ", "")]
+        [DataRow("a", "a")]
+        [DataRow(" a", " a")]
+        [DataRow("a ", "a ")]
+        [DataRow("//a", "")]
+        [DataRow("//a\nb", "b")]
+        [DataRow("\n//a\nb", "b")]
+        [DataRow("\n//a\n\nb", "b")]
+        [DataRow("//a\nb\n//c", "b\n//c")]
+        [DataRow("\n//a\nb\n//c", "b\n//c")]
+        [DataRow("//a\n\n\nb\n//c", "b\n//c")]
+        [DataRow("//a\n\n\nb\n\n//c", "b\n\n//c")]
+        public void WithoutHeaderWithGoodArgs2(string oldText, string expected)
         {
-            oldText.WithoutHeader(fileKind).Should().Be(expected);
+            var oldLines = oldText.ToLines();
+            var newLines = oldLines.WithoutHeader();
+
+            newLines.Should().BeEquivalentTo(expected.ToLines());            
         }
     }
 }

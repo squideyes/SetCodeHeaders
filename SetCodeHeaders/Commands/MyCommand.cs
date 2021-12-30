@@ -10,7 +10,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SetCodeHeaders
 {
@@ -33,7 +32,7 @@ namespace SetCodeHeaders
 
             var fullPath = GetHeaderTextFullPath(solution);
 
-            var (hasLines, lines) = GetHeaderLines(fullPath);
+            var (hasLines, headerLines) = GetHeaderLines(fullPath);
 
             if (!hasLines)
             {
@@ -52,7 +51,7 @@ namespace SetCodeHeaders
 
                 foreach (var file in files)
                 {
-                    if (file.FullPath.HasValidExtension())
+                    if (file.FullPath.IsCsFile())
                         fileNames.Add(file.FullPath);
                 }
             }
@@ -60,7 +59,7 @@ namespace SetCodeHeaders
             if (fileNames.Count == 0)
             {
                 Package.ShowMessageBox(
-                     $"The \"{solution.ToNameOnly()}\" solution does not contain updatable files!");
+                     $"The \"{solution.ToNameOnly()}\" solution does not contain .CS files!");
 
                 return;
             }
@@ -68,30 +67,36 @@ namespace SetCodeHeaders
             int updated = 0;
             int skipped = 0;
 
+            bool GetNewLines(List<string> oldLines, out List<string> newLines)
+            {
+                newLines = new List<string>();
+
+                newLines.AddRange(headerLines);
+
+                newLines.AddRange(oldLines.WithoutHeader());
+
+                var changed = !oldLines.SequenceEqual(newLines);
+
+                if (!changed)
+                    skipped++;
+
+                return changed;
+            };
+
             foreach (var fileName in fileNames)
             {
-                var fileKind = fileName.ToFileKind();
-
                 if (await VS.Documents.IsOpenAsync(fileName))
                 {
-                    var docView = await VS.Documents.GetDocumentViewAsync(fileName);
+                    var docView = await VS.Documents
+                        .GetDocumentViewAsync(fileName);
 
-                    var sb = new StringBuilder();
+                    var oldLines = docView.TextBuffer.CurrentSnapshot
+                        .Lines.Select(l => l.GetText()).ToList();
 
-                    foreach (var line in docView.TextBuffer.CurrentSnapshot.Lines)
-                        sb.AppendLine(line.GetText());
-
-                    var oldText = sb.ToString();
-
-                    var newText = GetHeaderText(fileKind, lines)
-                        + oldText.WithoutHeader(fileKind);
-
-                    if (newText == oldText)
-                    {
-                        skipped++;
-
+                    if (!GetNewLines(oldLines, out List<string> newLines))
                         continue;
-                    }
+
+                    var newText = string.Join("\r\n", newLines);
 
                     using var edit = docView.TextBuffer.CreateEdit();
 
@@ -115,15 +120,19 @@ namespace SetCodeHeaders
                 {
                     var oldText = File.ReadAllText(fileName);
 
-                    var newText = GetHeaderText(fileKind, lines)
-                        + oldText.WithoutHeader(fileKind);
-
-                    if (newText == oldText)
+                    if (string.IsNullOrEmpty(oldText))
                     {
                         skipped++;
 
-                        continue;
+                        return;
                     }
+
+                    var oldLines = oldText.ToLines();
+
+                    if (!GetNewLines(oldLines, out List<string> newLines))
+                        continue;
+
+                    var newText = string.Join("\r\n", newLines);
 
                     File.WriteAllText(fileName, newText);
 
@@ -134,34 +143,6 @@ namespace SetCodeHeaders
             MiscHelpers.ShowMessageBox(Package,
                 $"{updated:N0} \"{solution.ToNameOnly()}\" files were updated ({skipped:N0} were skipped).",
                 MessageBoxKind.Info);
-        }
-
-        private string GetHeaderText(FileKind fileKind, List<string> lines)
-        {
-            var sb = new StringBuilder();
-
-            switch (fileKind)
-            {
-                case FileKind.CS:
-                    foreach (var line in lines)
-                        sb.AppendLine("// " + line);
-                    sb.AppendLine();
-                    break;
-                case FileKind.CONFIG:
-                case FileKind.XAML:
-                case FileKind.XML:
-                case FileKind.XSD:
-                    sb.AppendLine("<!-- ");
-                    foreach (var line in lines)
-                        sb.AppendLine(line);
-                    sb.AppendLine("-->");
-                    sb.AppendLine();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(fileKind));
-            }
-
-            return sb.ToString();
         }
 
         private string GetHeaderTextFullPath(Solution solution)
@@ -188,8 +169,17 @@ namespace SetCodeHeaders
             if (lines.All(l => string.IsNullOrWhiteSpace(l)))
                 return (false, null);
 
-            return (true, lines.TrimEmptyLines());
+            var result = new List<string>();
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    result.Add("");
+                else
+                    result.Add("// " + line.TrimEnd());
+            }
+
+            return (true, result);
         }
     }
 }
-
