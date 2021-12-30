@@ -1,12 +1,3 @@
-// ********************************************************
-// Copyright (C) 2021 Louis S. Berman (louis@squideyes.com) 
-// 
-// This file is part of SetCodeHeaders
-// 
-// The use of this source code is licensed under the terms 
-// of the MIT License (https://opensource.org/licenses/MIT)
-// ********************************************************
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -72,7 +63,7 @@ namespace SetCodeHeaders
                 newLines = new List<string>();
 
                 newLines.AddRange(headerLines);
-
+                newLines.Add("");
                 newLines.AddRange(oldLines.WithoutHeader());
 
                 var changed = !oldLines.SequenceEqual(newLines);
@@ -124,7 +115,7 @@ namespace SetCodeHeaders
                     {
                         skipped++;
 
-                        return;
+                        continue;
                     }
 
                     var oldLines = oldText.ToLines();
@@ -171,10 +162,16 @@ namespace SetCodeHeaders
 
             var result = new List<string>();
 
+            while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines.First()))
+                lines.RemoveAt(0);
+
+            while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines.Last()))
+                lines.RemoveAt(lines.Count - 1);
+
             foreach (var line in lines)
             {
                 if (string.IsNullOrWhiteSpace(line))
-                    result.Add("");
+                    result.Add("//");
                 else
                     result.Add("// " + line.TrimEnd());
             }
