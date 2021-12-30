@@ -30,7 +30,7 @@ namespace UnitTests
         [DataRow("\n//a\nb\n//c", "b\n//c")]
         [DataRow("//a\n\n\nb\n//c", "b\n//c")]
         [DataRow("//a\n\n\nb\n\n//c", "b\n\n//c")]
-        public void WithoutHeaderWithGoodArgs2(string oldText, string expected)
+        public void WithoutHeaderWithGoodArgs(string oldText, string expected)
         {
             var oldLines = oldText.ToLines();
             var newLines = oldLines.WithoutHeader();
