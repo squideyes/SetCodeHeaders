@@ -1,4 +1,4 @@
-﻿// ********************************************************
+// ********************************************************
 // Copyright (C) 2021 Louis S. Berman (louis@squideyes.com) 
 // 
 // This file is part of SetCodeHeaders
