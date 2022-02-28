@@ -51,6 +51,9 @@ namespace SetCodeHeaders
 
                 foreach (var file in files)
                 {
+                    if (Path.GetFileName(file.Name) == "packages.config")
+                        continue;
+
                     if (file.FullPath.IsCsFile())
                         fileNames.Add(file.FullPath);
                 }
